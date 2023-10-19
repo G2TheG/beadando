@@ -1,0 +1,52 @@
+# beimportálom a grafikus modult, a tkinter-t majd "elnevezem" tk-nak és később így hivatkozom rá
+import tkinter as tk
+
+#a ToDoList osztály készítése
+class ToDoList:
+    def __init__(self, root): #paraméter
+        self.root = root
+        self.root.title("To-Do List By W9DBJH")
+
+        # Lista létrehozása a teendők tárolásához, megjelenítés, méretezés
+        self.tasks = []
+        self.task_listbox = tk.Listbox(self.root, selectmode=tk.SINGLE, height=15, width=60)
+        self.task_listbox.pack(pady=15)
+
+        # gomb létrehozása, hozzáad egy új teendőt a listához
+        self.add_button = tk.Button(self.root, text="Teendő hozzáadása", command=self.add_task, height=2)
+        self.add_button.pack()
+
+        # Teendők kezelése
+        self.task_entry = tk.Entry(self.root, width=30)
+        self.task_entry.pack()
+
+        # Dupla kattintással törölhető elem a listából
+        self.task_listbox.bind("<Double-1>", self.remove_task)
+
+    #az add_task függvénnyel rögzítjük a felhasználó által begépelt adatokat
+    #amikor rányomunk a hozzáadás gombra, akkor
+    def add_task(self):
+        task = self.task_entry.get() #gomb lenyomásával indul
+        if task: # ha van valami beírva, csak akkor "indul el"
+            self.tasks.append(task)
+            self.update_listbox()
+            self.task_entry.delete(0, tk.END) #törlésre kerül a beviteli mező, hogy újat lehessen beírni
+
+    #eseménykezelés, ezzel a fügvénnyel tudjuk kitörölni
+    def remove_task(self, event):
+        selected_task = self.task_listbox.get(self.task_listbox.curselection()) #kiválasztás
+        if selected_task in self.tasks: #ellenőrzés hogy létezik-e
+            self.tasks.remove(selected_task) # törli az adott elemet
+            self.update_listbox() # lista frissítése -> törölt elem kikerül
+
+    def update_listbox(self):
+        self.task_listbox.delete(0, tk.END) # lista tisztítása 0-tól END-ig
+        for task in self.tasks:      #ciklussal végigmegy a self.tasks listán és a megmaradt adatokat újra kiírja
+            self.task_listbox.insert(tk.END, task)
+
+# innen indul a program
+
+if __name__ == "__main__":   #a __name__ értéke a __main__ ugyanis közvetlenül futtatjuk
+    root = tk.Tk()
+    todo_list = ToDoList(root)
+    root.mainloop()
